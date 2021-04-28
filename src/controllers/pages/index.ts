@@ -1,5 +1,5 @@
 import {
-  Constant, Controller, Get, HeaderParams, Req, Res, View,
+  Constant, Controller, Get, HeaderParams, QueryParams, Req, Res, View,
 } from '@tsed/common';
 import { Hidden, SwaggerSettings } from '@tsed/swagger';
 import { Returns } from '@tsed/schema';
@@ -32,19 +32,20 @@ export class IndexCtrl {
 
   @Get('/review')
   @(Returns(200, String).ContentType('text/json'))
-  review(@Req() req: Req, @Res() res: Res): void {
+  review(@QueryParams('destinationId') specifiedDestinationId: string, @Res() res: Res): void {
+    const destinationId = specifiedDestinationId || '1506246';
 
     const hotelreq = unirest('GET', 'https://hotels4.p.rapidapi.com/properties/list');
     hotelreq.query({
       pageNumber: '1',
-      destinationId: '1506246',
+      destinationId,
       pageSize: '25',
       sortOrder: 'PRICE_HIGHEST_FIRST',
       locale: 'en_US',
       currency: 'USD',
     });
     hotelreq.headers({
-      'x-rapidapi-key': '<hoge>',
+      'x-rapidapi-key': process.env.X_RAPIDAPI_KEY,
       'x-rapidapi-host': 'hotels4.p.rapidapi.com',
       useQueryString: true,
     });
