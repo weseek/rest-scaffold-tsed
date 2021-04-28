@@ -1,8 +1,9 @@
 import {
-  Constant, Controller, Get, HeaderParams, View,
+  Constant, Controller, Get, HeaderParams, Req, Res, View,
 } from '@tsed/common';
 import { Hidden, SwaggerSettings } from '@tsed/swagger';
 import { Returns } from '@tsed/schema';
+
 
 @Hidden()
 @Controller('/')
@@ -28,4 +29,31 @@ export class IndexCtrl {
     };
   }
 
+  @Get('/review')
+  @(Returns(200, String).ContentType('text/json'))
+  review(@Req() req: Req, @Res() res: Res) {
+    var unirest = require("unirest");
+    var hotelreq = unirest("GET", "https://hotels4.p.rapidapi.com/properties/list");
+    hotelreq.query({
+      "pageNumber": "1",
+      "destinationId": "1506246",
+      "pageSize": "25",
+      "sortOrder": "PRICE_HIGHEST_FIRST",
+      "locale": "en_US",
+      "currency": "USD"
+    });
+    hotelreq.headers({
+      "x-rapidapi-key": "<hoge>",
+      "x-rapidapi-host": "hotels4.p.rapidapi.com",
+      "useQueryString": true
+    });
+    hotelreq.end(function (hotelres) {
+      if (hotelres.error) throw new Error(hotelres.error);
+      const thumnails = hotelres.body.data.body.searchResults.results.map(result => {
+        console.log(result);
+        return result.optimizedThumbUrls.srpDesktop;
+      })
+      console.log(thumnails);
+    });
+  }
 }
