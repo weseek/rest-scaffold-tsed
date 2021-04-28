@@ -28,6 +28,7 @@
     "@tsed/schema": "6.45.0",
     "@tsed/swagger": "6.45.0",
     "ajv": "8.1.0",
+    "axios": "^0.21.1",
     "body-parser": "1.19.0",
     "browser-bunyan": "^1.6.3",
     "bunyan": "^1.8.15",
