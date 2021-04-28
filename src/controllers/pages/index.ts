@@ -1,8 +1,10 @@
 import {
-  Constant, Controller, Get, HeaderParams, View,
+  BodyParams,
+  Constant, Controller, Get, HeaderParams, Post, QueryParams, Req, Res, View
 } from '@tsed/common';
 import { Hidden, SwaggerSettings } from '@tsed/swagger';
 import { Returns } from '@tsed/schema';
+import { markAsUntransferable } from 'worker_threads';
 
 @Hidden()
 @Controller('/')
@@ -26,6 +28,34 @@ export class IndexCtrl {
         };
       }),
     };
+  }
+
+  @Post('/saikoro')
+  saikoro(@BodyParams() body: any) {
+    /**
+     * {
+     *   allowDuplicates: boolean,
+     *   count: number,
+     *   persons: [
+     *     { name: string, birthday: string (1985/12/11, etc..) },
+     *     { name: string, birthday: string (1985/12/11, etc..) },
+     *     { name: string, birthday: string (1985/12/11, etc..) }
+     *   ]
+     * }
+     */
+    const allowDuplicates: boolean = body.allowDuplicates ? true : false;
+    const persons: any[] = body.persons;
+    const result: any[] = [];
+    [...Array(body.count)].map(() => {
+      const random = Math.floor(Math.random() * persons.length);
+      result.push(persons[random].name);
+      if (!allowDuplicates) {
+        persons.splice(random, 1);
+      }
+    });
+
+    // 選択された name を返す
+    return result;
   }
 
 }
